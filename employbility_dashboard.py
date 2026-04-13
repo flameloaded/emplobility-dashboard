@@ -221,29 +221,21 @@ total_mentees_assigned = (
     if "Assigned Mentor" in filtered_fellows.columns else 0
 )
 
-st.markdown("## Key Metrics")
+c1, c2, c3, c4 = st.columns(4)
+c1.metric("Total Fellows", f"{total_fellows:,}")
+c2.metric("Completion Rate", f"{completion_rate}%" if completion_rate is not None else "N/A")
+c3.metric("Total Mentors", f"{total_mentors:,}")
+c4.metric("Total Mentees Assigned", f"{total_mentees_assigned:,}")
 
-# Row 1
-c1, c2, c3, c4, c5 = st.columns(5)
-c1.metric("Total Responses", f"{total_rows:,}")
-c2.metric("Total Fellows", f"{total_fellows:,}")
-c3.metric("Completion Rate", f"{completion_rate}%" if completion_rate is not None else "N/A")
-c4.metric("Total Mentors", f"{total_mentors:,}")
-c5.metric("Total Mentees Assigned", f"{total_mentees_assigned:,}")
-
-st.markdown("---")
-
-# Row 2
-c6, c7 = st.columns(2)
-c6.metric(
+c5, c6 = st.columns(2)
+c5.metric(
     "Female Fellows",
     f"{(filtered_fellows['Gender'] == 'Female').sum():,}" if "Gender" in filtered_fellows.columns else "N/A"
 )
-c7.metric(
+c6.metric(
     "Male Fellows",
     f"{(filtered_fellows['Gender'] == 'Male').sum():,}" if "Gender" in filtered_fellows.columns else "N/A"
 )
-
 
 
 # =========================
