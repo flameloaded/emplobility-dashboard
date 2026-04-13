@@ -139,7 +139,7 @@ avg_merit_score = filtered_fellows["Overall Average"].mean()
 avg_merit_out_of_10 = avg_merit_score / 10 if pd.notna(avg_merit_score) else None
 
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Total Entry", f"{total_rows:,}")
+c1.metric("Total Response", f"{total_rows:,}")
 c2.metric("Total Fellows", f"{total_fellows:,}")
 c3.metric("Completion Rate", f"{completion_rate}%" if completion_rate is not None else "N/A")
 c4.metric("Average Merit Score", f"{avg_merit_score:.1f}" if pd.notna(avg_merit_score) else "N/A")
