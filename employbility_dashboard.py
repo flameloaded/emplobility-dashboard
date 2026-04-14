@@ -246,7 +246,10 @@ left, right = st.columns(2)
 with left:
     st.subheader("Gender Split (Overall)")
     if not filtered_fellows.empty:
+
         gender_df = count_pct_table(filtered_fellows["Gender"], "Gender")
+
+        # Chart first
         fig_gender = px.pie(
             gender_df,
             names="Gender",
@@ -254,7 +257,13 @@ with left:
             hole=0.4
         )
         st.plotly_chart(fig_gender, use_container_width=True)
-        st.dataframe(gender_df, use_container_width=True)
+
+        # Rename column header
+        gender_df = gender_df.rename(columns={"Percent": "Percentage (%)"})
+
+        # Display table
+        st.dataframe(gender_df, use_container_width=True, hide_index=True)
+
     else:
         st.info("No data available for the selected filters.")
 
@@ -270,7 +279,10 @@ with right:
         )
         fig_region.update_traces(texttemplate="%{text}%", textposition="outside")
         st.plotly_chart(fig_region, use_container_width=True)
-        st.dataframe(region_df, use_container_width=True)
+
+        region_df = region_df.rename(columns={"Percent": "Percentage (%)"})
+
+        st.dataframe(region_df, use_container_width=True, hide_index=True)
     else:
         st.info("No data available for the selected filters.")
 
@@ -296,7 +308,8 @@ if not filtered_fellows.empty:
     fig_state.update_layout(xaxis_tickangle=-35, height=600)
 
     st.plotly_chart(fig_state, use_container_width=True)
-    st.dataframe(state_df, use_container_width=True)
+    state_df = state_df.rename(columns={"Percent": "Percentage (%)"})
+    st.dataframe(state_df, use_container_width=True, hide_index=True)
 else:
     st.info("No data available for the selected filters.")
 
@@ -325,7 +338,8 @@ if not filtered_fellows.empty:
     )
 
     st.plotly_chart(fig_tier, use_container_width=True)
-    st.dataframe(tier_df, use_container_width=True)
+    tier_df = tier_df.rename(columns={"Percent": "Percentage (%)"})
+    st.dataframe(tier_df, use_container_width=True, hide_index=True)
 else:
     st.info("No data available for the selected filters.")
 
@@ -362,6 +376,7 @@ else:
 st.subheader("Mentor Summary")
 
 if not filtered_fellows.empty and "Assigned Mentor" in filtered_fellows.columns:
+    
     mentor_summary = (
         filtered_fellows.dropna(subset=["Assigned Mentor"])
         .groupby(
@@ -369,7 +384,7 @@ if not filtered_fellows.empty and "Assigned Mentor" in filtered_fellows.columns:
                 "Assigned Mentor",
                 "Assigned Mentor State",
                 "Assigned Mentor Region",
-                "Primary Sector"   # 👈 added here
+                "Primary Sector"
             ],
             dropna=False
         )
@@ -380,7 +395,17 @@ if not filtered_fellows.empty and "Assigned Mentor" in filtered_fellows.columns:
         .sort_values("Mentee_Count", ascending=False)
     )
 
-    st.dataframe(mentor_summary, use_container_width=True)
+    # ✅ Add ranking (1–12)
+    mentor_summary["S/N"] = range(1, len(mentor_summary) + 1)
+
+    # ✅ Move Rank to first column
+    mentor_summary = mentor_summary[
+        ["S/N"] + [col for col in mentor_summary.columns if col != "S/N"]
+    ]
+    mentor_summary = mentor_summary.rename(columns={"Mentee_Count": "Mentee Count"})
+
+    st.dataframe(mentor_summary, use_container_width=True, hide_index=True)
+
 else:
     st.info("No mentor data available for the selected filters.")
 
@@ -408,7 +433,8 @@ if not filtered_fellows.empty and "Primary Sector" in filtered_fellows.columns:
     )
 
     st.plotly_chart(fig_sector, use_container_width=True)
-    st.dataframe(sector_df, use_container_width=True)
+    sector_df = sector_df.rename(columns={"Mentee_Count": "Mentee Count"})
+    st.dataframe(sector_df, use_container_width=True, hide_index=True)
 
 else:
     st.info("No sector data available.")
@@ -458,7 +484,7 @@ display_cols = [c for c in display_cols if c in filtered_fellows.columns]
 if not filtered_fellows.empty:
     st.dataframe(
         filtered_fellows[display_cols].sort_values("Overall Average", ascending=False),
-        use_container_width=True
+        use_container_width=True, hide_index=True
     )
 else:
     st.info("No data available for the selected filters.")
